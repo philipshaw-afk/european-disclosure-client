@@ -18,18 +18,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Check out the latest admin tracker (avoids CDN caching)
+        uses: actions/checkout@v4
+        with:
+          repository: philipshaw-afk/french-opa-admin
+          path: admin-tracker
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
-      - name: Download the latest admin tracker
-        run: |
-          curl -fsSL --retry 3 \
-            "https://raw.githubusercontent.com/philipshaw-afk/french-opa-admin/main/index.html" \
-            -o admin-index.html
-
       - name: Rebuild client data from admin tracker
-        run: python pipeline/update_client_from_admin.py --admin admin-index.html --client index.html
+        run: python pipeline/update_client_from_admin.py --admin admin-tracker/index.html --client index.html
 
       - name: Commit and push
         run: |
