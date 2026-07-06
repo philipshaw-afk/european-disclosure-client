@@ -457,6 +457,41 @@ def build_registers(admin, deal_by_norm):
         pct = None
         if share_capital and long_total is not None:
             pct = long_total / share_capital * 100
+
+        # First-seen holding: same per-metric "earliest disclosed" scan as the
+        # "last" block above, but walking forward from the oldest row so the
+        # register can show a "First seen %" and a % change over time.
+        first_share_long = None
+        first_derivative_long = None
+        for row in rows:
+            holding = parse_holding(row.get("resulting_holding"))
+            if holding["value"] is None:
+                continue
+            if holding["kind"] == "long":
+                is_derivative = (
+                    row.get("instrument_type") == "Derivative"
+                    or holding["holding_type"] == "derivative"
+                )
+                if is_derivative and first_derivative_long is None:
+                    first_derivative_long = holding["value"]
+                elif not is_derivative and first_share_long is None:
+                    first_share_long = holding["value"]
+            if first_share_long is not None and first_derivative_long is not None:
+                break
+        first_long_total = None
+        if first_share_long is not None or first_derivative_long is not None:
+            first_long_total = (first_share_long or 0) + (first_derivative_long or 0)
+        first = rows[0]
+        first_date = (
+            date_only(first.get("published_at"))
+            or date_only(first.get("date_information"))
+            or first.get("transaction_date")
+            or ""
+        )
+        first_pct = None
+        if share_capital and first_long_total is not None:
+            first_pct = first_long_total / share_capital * 100
+
         registers[target].append(
             {
                 "investor": filer,
@@ -470,6 +505,9 @@ def build_registers(admin, deal_by_norm):
                 "derivative_long": derivative_long or 0,
                 "short_shares": short_shares or 0,
                 "pct": pct,
+                "first_date": first_date,
+                "first_shares": first_long_total,
+                "first_pct": first_pct,
                 "source": "AMF BDIF",
                 "source_url": last.get("document_url") or "",
             }
