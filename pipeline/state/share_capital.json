@@ -1,0 +1,661 @@
+{
+  "_note": "Total ordinary share capital per French target. Seeded from the M&A Monitor bid premia export (bid_premia_20260705.xlsx); maintained automatically from AMF 223-16 declarations by pipeline/parse_capital.py. Set \"manual\": true on an entry to pin it.",
+  "FILAE SA": {
+    "total": 1595340,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "ILIAD SA": {
+    "total": 59622465,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "IGE-XAO SA": {
+    "total": 1299947,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "DEVOTEAM SA": {
+    "total": 8225622,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "PRODWARE SA": {
+    "total": 7359025,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "ST DUPONT SA": {
+    "total": 524279556,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "SQLI SA": {
+    "total": 4666606,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "ARTEFACT SA": {
+    "total": 34100479,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "ENVEA SA": {
+    "total": 1686539,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "AKKA TECHNOLOGIES SE": {
+    "total": 31210078,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "GROUPE OPEN SA": {
+    "total": 8060601,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "CNP ASSURANCES SA": {
+    "total": 686244403,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "ITESOFT SA": {
+    "total": 5709346,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "TIVOLY SA": {
+    "total": 1102521,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "1000MERCIS SA (NUMBERLY.COM)": {
+    "total": 2161171,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "EUROPCAR MOBILITY GROUP SA": {
+    "total": 5014620532,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "UCAR SA": {
+    "total": 1602855,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "HIOLLE INDUSTRIES SA": {
+    "total": 9172081,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "UMANIS SA": {
+    "total": 18035046,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "GENERIX SA": {
+    "total": 22676764,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "ALBIOMA SA": {
+    "total": 32275373,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "CAST SA": {
+    "total": 17562740,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "ONCODESIGN SA": {
+    "total": 6830876,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "BLUELINEA SA": {
+    "total": 12236584,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "ATARI SA": {
+    "total": 379280861,
+    "date": "2026-07-05",
+    "status": "Failed"
+  },
+  "THERADIAG SA": {
+    "total": 13006562,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "SOMFY SA": {
+    "total": 34450876,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "FLO SA (GROUPE)": {
+    "total": 7651572,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "MANUTAN INTERNATIONAL SA": {
+    "total": 7596654,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "CS GROUP SA": {
+    "total": 24517843,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "EDF SA (ELECTRICITY DE FRANCE)": {
+    "total": 3885692573,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "INTRASENSE SA": {
+    "total": 31280414,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "VILMORIN & CIE SA": {
+    "total": 22910698,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "PHERECYDES PHARMA SA": {
+    "total": 7221477,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "OLYMPIQUE LYONNAIS GROUPE SA": {
+    "total": 58489971,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "OBER SA": {
+    "total": 1441615,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "ROTHSCHILD & CO SCA": {
+    "total": 77002277,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "BIOCORP PRODUCTION SA": {
+    "total": 4398587,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "BALYO SA": {
+    "total": 33709920,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "LAGARDERE SA": {
+    "total": 140021426,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "PCAS SA": {
+    "total": 13741673,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "ESI GROUP SA": {
+    "total": 5726611,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "BOIRON SA": {
+    "total": 17375673,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "SEQUANS COMMUNICATIONS SA": {
+    "total": 58473239,
+    "date": "2026-07-05",
+    "status": "Failed"
+  },
+  "ORAPI SA": {
+    "total": 6514607,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "BELIEVE SA": {
+    "total": 97098850,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "COMPAGNIE INDUSTRIELLE ET FINANCIERE D'ENTREPRISES": {
+    "total": 1171796,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "TIPIAK SA": {
+    "total": 169151,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "VISIATIV SA": {
+    "total": 4601508,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "GALIMMO SCA": {
+    "total": 2322786,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "COVIVIO HOTELS SA": {
+    "total": 148133674,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "MICROPOLE SA": {
+    "total": 26952115,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "OSMOZIS SA": {
+    "total": 1704653,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "TRAVEL TECHNOLOGY INTERACTIVE SA": {
+    "total": 7840102,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "GROUPE PAROT SA": {
+    "total": 6417379,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "CLASQUIN SA": {
+    "total": 2327726,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "NHOA SA": {
+    "total": 275196760,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "COMPAGNIE DES TRAMWAYS DE ROUEN SA": {
+    "total": 9150,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "MRM SA": {
+    "total": 2690433,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "EVOLIS SA": {
+    "total": 5220820,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "KEYRUS SA": {
+    "total": 15898244,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "SOCIETE POUR L’INFORMATIQUE INDUSTRIELLE SA (SII)": {
+    "total": 19330589,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "BERKEM SA (GROUPE)": {
+    "total": 17594851,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "EUROBIO SCIENTIFIC SA": {
+    "total": 10026847,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "ESKER SA": {
+    "total": 6058267,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "LEXIBOOK LINGUISTIC ELECTRONIC SYSTEM SA": {
+    "total": 7763319,
+    "date": "2026-07-05",
+    "status": "Pending"
+  },
+  "CHARGEURS SA": {
+    "total": 24037854,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "LALIQUE GROUP SA": {
+    "total": 7621451,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "UNION FINANCIERE DE FRANCE BANQUE SA": {
+    "total": 16215228,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "ALTUR INVESTISSEMENT SA": {
+    "total": 3867468,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "AUGROS COSMETIC PACKAGING SA": {
+    "total": 1421538,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "NEOEN SA": {
+    "total": 151792665,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "AURES TECHNOLOGIES SA": {
+    "total": 4000000,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "M2I SA": {
+    "total": 5769985,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "VERALLIA SA": {
+    "total": 120805103,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "PARAGON ID SA": {
+    "total": 1981885,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "ALTAMIR SCA": {
+    "total": 36512301,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "AMPLITUDE SURGICAL SA": {
+    "total": 47971121,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "AGROGENERATION SA": {
+    "total": 221586387,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "EXCLUSIVE NETWORKS SA": {
+    "total": 90626903,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "COGELEC SA": {
+    "total": 8294332,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "WAGA ENERGY SA": {
+    "total": 24797706,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "VOGO SA": {
+    "total": 6127011,
+    "date": "2026-07-05",
+    "status": "Completed"
+  },
+  "GROUPE PIZZORNO ENVIRONNEMENT SA": {
+    "total": 4000000,
+    "date": "2026-06-09",
+    "status": "Pending",
+    "history": [
+      {
+        "date": "2025-11-24",
+        "as_at": "2025-11-12",
+        "total": 4000000,
+        "voting_rights": 6874564,
+        "source_url": "https://fr.ftp.opendatasoft.com/datadila/INFOFI/ACT/2025/11/FCACT077239_20251124.pdf"
+      },
+      {
+        "date": "2026-06-25",
+        "as_at": "2026-06-04",
+        "total": 4000000,
+        "voting_rights": 6874635,
+        "source_url": "https://fr.ftp.opendatasoft.com/datadila/INFOFI/ACT/2026/06/FCACT080213_20260625.pdf"
+      }
+    ],
+    "source": "AMF 223-16 declaration (info-financiere.gouv.fr)",
+    "source_url": "https://fr.ftp.opendatasoft.com/datadila/INFOFI/ACT/2026/06/FCACT080213_20260625.pdf"
+  },
+  "ESSO SOCIETE ANONYME FRANCAISE SA": {
+    "total": 12854578,
+    "date": "2026-07-05",
+    "status": "Pending",
+    "note": "Corrected 2026-09-24: seeded 2,199,418 was the number of shares bid for; now North Atlantic Energies (see that entry)."
+  },
+  "SOCIETE FERMIERE DU CASINO MUNICIPAL DE CANNES SA": {
+    "total": 157664,
+    "date": "2026-07-05",
+    "status": "Pending"
+  },
+  "FNAC DARTY SA": {
+    "total": 29107842,
+    "date": "2026-07-05",
+    "status": "Pending"
+  },
+  "VINPAI SA": {
+    "total": 4561415,
+    "date": "2026-04-24",
+    "status": "Pending",
+    "manual": true,
+    "note": "AMF 223-16 declaration 24/04/2026 (as at 31/03/2026): 4,561,415 shares / 4,728,885 voting rights, after 1m-share capital increase. Source: info-financiere.gouv.fr FCBWR167514.",
+    "history": [
+      {
+        "date": "2026-04-24",
+        "as_at": "2026-04-24",
+        "total": 4561415,
+        "voting_rights": 4728885,
+        "source_url": "https://fr.ftp.opendatasoft.com/datadila/INFOFI/BWR/2026/04/FCBWR167514_20260424.pdf"
+      }
+    ]
+  },
+  "POULAILLON SA": {
+    "total": 5111119,
+    "date": "2026-07-05",
+    "status": "Pending"
+  },
+  "INSTALLUX SA": {
+    "total": 280099,
+    "date": "2026-07-05",
+    "status": "Pending"
+  },
+  "EAGLE FOOTBALL GROUP SA (OLYMPIQUE LYONNAIS)": {
+    "total": 175873471,
+    "date": "2026-09-14",
+    "status": "Pending",
+    "history": [
+      {
+        "date": "2025-02-06",
+        "as_at": "2025-01-31",
+        "total": 175873471,
+        "voting_rights": 232149793,
+        "source_url": "https://fr.ftp.opendatasoft.com/datadila/INFOFI/ACT/2025/02/FCACT072915_20250206.pdf"
+      },
+      {
+        "date": "2025-03-11",
+        "as_at": "2025-02-28",
+        "total": 175873471,
+        "voting_rights": 232205047,
+        "source_url": "https://fr.ftp.opendatasoft.com/datadila/INFOFI/ACT/2025/03/FCACT073315_20250311.pdf"
+      },
+      {
+        "date": "2025-04-08",
+        "as_at": null,
+        "total": 175873471,
+        "voting_rights": 232198940,
+        "source_url": "https://fr.ftp.opendatasoft.com/datadila/INFOFI/ACT/2025/04/FCACT073752_20250408.pdf"
+      },
+      {
+        "date": "2025-05-13",
+        "as_at": "2025-04-30",
+        "total": 175873471,
+        "voting_rights": 232198310,
+        "source_url": "https://fr.ftp.opendatasoft.com/datadila/INFOFI/ACT/2025/05/FCACT074354_20250513.pdf"
+      },
+      {
+        "date": "2025-06-19",
+        "as_at": "2025-05-31",
+        "total": 175873471,
+        "voting_rights": 232150804,
+        "source_url": "https://fr.ftp.opendatasoft.com/datadila/INFOFI/ACT/2025/06/FCACT074917_20250619.pdf"
+      },
+      {
+        "date": "2025-07-23",
+        "as_at": null,
+        "total": 175873471,
+        "voting_rights": 306287610,
+        "source_url": "https://fr.ftp.opendatasoft.com/datadila/INFOFI/ACT/2025/07/FCACT075530_20250723.pdf"
+      },
+      {
+        "date": "2025-08-13",
+        "as_at": "2025-07-31",
+        "total": 175873471,
+        "voting_rights": 306257053,
+        "source_url": "https://fr.ftp.opendatasoft.com/datadila/INFOFI/ACT/2025/08/FCACT075877_20250813.pdf"
+      },
+      {
+        "date": "2026-01-08",
+        "as_at": "2025-05-31",
+        "total": 175873471,
+        "voting_rights": 232150804,
+        "source_url": "https://fr.ftp.opendatasoft.com/datadila/INFOFI/ACT/2026/01/FCACT077729_20260108.pdf"
+      },
+      {
+        "date": "2026-01-08",
+        "as_at": "2025-10-31",
+        "total": 175873408,
+        "voting_rights": 322791039,
+        "source_url": "https://fr.ftp.opendatasoft.com/datadila/INFOFI/ACT/2026/01/FCACT077743_20260108.pdf"
+      },
+      {
+        "date": "2026-02-25",
+        "as_at": null,
+        "total": 175873471,
+        "voting_rights": 322783443,
+        "source_url": "https://fr.ftp.opendatasoft.com/datadila/INFOFI/ACT/2026/02/FCACT078421_20260225.pdf"
+      },
+      {
+        "date": "2026-03-24",
+        "as_at": null,
+        "total": 175873471,
+        "voting_rights": 322996398,
+        "source_url": "https://fr.ftp.opendatasoft.com/datadila/INFOFI/ACT/2026/03/FCACT078784_20260324.pdf"
+      },
+      {
+        "date": "2026-04-08",
+        "as_at": null,
+        "total": 175873471,
+        "voting_rights": 322992208,
+        "source_url": "https://fr.ftp.opendatasoft.com/datadila/INFOFI/ACT/2026/04/FCACT079045_20260408.pdf"
+      },
+      {
+        "date": "2026-06-15",
+        "as_at": "2026-04-30",
+        "total": 175873471,
+        "voting_rights": 323013349,
+        "source_url": "https://fr.ftp.opendatasoft.com/datadila/INFOFI/ACT/2026/06/FCACT080100_20260615.pdf"
+      },
+      {
+        "date": "2026-07-07",
+        "as_at": "2026-06-30",
+        "total": 175873471,
+        "voting_rights": 168800909,
+        "source_url": "https://fr.ftp.opendatasoft.com/datadila/INFOFI/ACT/2026/07/FCACT080444_20260707.pdf"
+      },
+      {
+        "date": "2026-09-14",
+        "as_at": null,
+        "total": 175873471,
+        "voting_rights": 168799035,
+        "source_url": "https://fr.ftp.opendatasoft.com/datadila/INFOFI/ACT/2026/09/FCACT081345_20260914.pdf"
+      }
+    ],
+    "source": "AMF 223-16 declaration (info-financiere.gouv.fr)"
+  },
+  "INFOCLIP SA": {
+    "total": 532405,
+    "date": "2026-07-05",
+    "status": "Pending"
+  },
+  "PIERRE ET VACANCES": {
+    "total": 462008714,
+    "date": "2026-08-05",
+    "status": "Pending",
+    "source": "AMF 223-16 declaration (info-financiere.gouv.fr)",
+    "source_url": "https://fr.ftp.opendatasoft.com/datadila/INFOFI/BWR/2026/09/FCBWR169314_20260908.pdf",
+    "note": "Corrected 2026-09-24: previous figure (4,619,917) was the share capital in euros (nominal EUR 0.01), not the share count."
+  },
+  "_note_capital_history": "History arrays are maintained automatically from AMF 223-16 declarations (last 24 months only). Parsed totals are validated against disclosed positions and the existing figure; the entry's total/date is only replaced by a NEWER declaration, and never when the entry has \"manual\": true.",
+  "EXAIL TECHNOLOGIES": {
+    "total": 17044747,
+    "date": "2026-05-13",
+    "status": "Pending",
+    "source": "AMF 223-16 declaration (info-financiere.gouv.fr)",
+    "source_url": "https://fr.ftp.opendatasoft.com/datadila/INFOFI/ACT/2026/05/FCACT079847_20260527.pdf"
+  },
+  "VOYAGEURS DU MONDE": {
+    "total": 4488726,
+    "date": "2026-08-31",
+    "status": "Pending",
+    "source": "AMF 223-16 declaration (info-financiere.gouv.fr)",
+    "source_url": "https://fr.ftp.opendatasoft.com/datadila/INFOFI/376/2026/09/FC376645443_20260910.pdf"
+  },
+  "ADEUNIS": {
+    "total": 4595540,
+    "date": "2025-02-28",
+    "status": "Pending",
+    "source": "AMF 223-16 declaration (info-financiere.gouv.fr)",
+    "source_url": "https://fr.ftp.opendatasoft.com/datadila/INFOFI/ACT/2025/03/FCACT073275_20250307.pdf",
+    "note": "Latest 223-16 declaration found (March 2025)."
+  },
+  "NORTH ATLANTIC ENERGIES": {
+    "total": 12854578,
+    "date": "2026-05-22",
+    "status": "Pending",
+    "source": "AMF threshold-crossing decision 226C (info-financiere.gouv.fr)",
+    "source_url": "https://fr.ftp.opendatasoft.com/datadila/INFOFI/307/8888/01/FC307629814_20260522.pdf",
+    "note": "Formerly Esso S.A.F.; capital of 12,854,578 shares per the AMF notice of 22 May 2026."
+  },
+  "GAUMONT": {
+    "total": 3119923,
+    "date": "2026-05-31",
+    "status": "Pending",
+    "source": "AMF 223-16 declaration (info-financiere.gouv.fr)",
+    "source_url": "https://fr.ftp.opendatasoft.com/datadila/INFOFI/MKW/2026/06/FCMKW135740_20260605.pdf"
+  },
+  "COMPAGNIE CHARGEURS INVEST": {
+    "total": 24933990,
+    "date": "2026-08-31",
+    "status": "Pending",
+    "source": "AMF 223-16 declaration (info-financiere.gouv.fr)",
+    "source_url": "https://fr.ftp.opendatasoft.com/datadila/INFOFI/ECO/2026/09/FCECO083059_20260902.pdf"
+  },
+  "FIDUCIAL OFFICE SOLUTIONS": {
+    "total": 2169232,
+    "date": "2025-02-28",
+    "status": "Pending",
+    "source": "AMF 223-16 declaration (info-financiere.gouv.fr)",
+    "source_url": "https://fr.ftp.opendatasoft.com/datadila/INFOFI/ACT/2025/03/FCACT073222_20250305.pdf"
+  }
+}

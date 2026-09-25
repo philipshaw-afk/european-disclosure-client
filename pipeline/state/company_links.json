@@ -1,0 +1,399 @@
+{
+  "_note": "Company-name links for the Manage Companies page. 'approved' and 'rejected' are kept as they are; 'auto', 'suggestions' and 'fragments' are recomputed on every daily build by pipeline/company_links.py.",
+  "updated_at": "2026-09-25T08:04:14+00:00",
+  "approved": [
+    {
+      "names": [
+        "BlackRock, Inc.",
+        "BLACKROCK GROUP"
+      ],
+      "shared": "BlackRock, Inc."
+    },
+    {
+      "names": [
+        "Oddo BHF AIF PLC",
+        "Oddo BHF Asset Management SAS"
+      ],
+      "shared": "Oddo BHF Asset Management SAS"
+    },
+    {
+      "names": [
+        "Millennium",
+        "Millennium International"
+      ],
+      "shared": "Millennium International"
+    },
+    {
+      "names": [
+        "Fidera GP S.a r.l.",
+        "Fidera Group Limited"
+      ],
+      "shared": "Fidera Group Limited",
+      "separate_entities": true
+    },
+    {
+      "names": [
+        "Abeille Assurances",
+        "Abeille Assurances Holding"
+      ],
+      "shared": "Abeille Assurances Holding"
+    },
+    {
+      "names": [
+        "Bpifrance",
+        "Bpifrance Investissement",
+        "EPIC Bpifrance"
+      ],
+      "shared": "Bpifrance"
+    },
+    {
+      "names": [
+        "Brookfield",
+        "Brookfield Renewable"
+      ],
+      "shared": "Brookfield Renewable"
+    },
+    {
+      "names": [
+        "SII Goes On",
+        "SII Goes On1"
+      ],
+      "shared": "SII Goes On"
+    }
+  ],
+  "rejected": [],
+  "auto": [
+    {
+      "names": [
+        "Amber Capital",
+        "Amber Capital UK LLP"
+      ],
+      "shared": "Amber Capital UK LLP",
+      "rule": "same name apart from case, punctuation or legal form"
+    },
+    {
+      "names": [
+        "BOUSSARD & GAVAUDAN",
+        "Boussard & Gavaudan",
+        "Boussard &Gavaudan Gestion SAS"
+      ],
+      "shared": "Boussard & Gavaudan Gestion SAS",
+      "rule": "shortened name"
+    },
+    {
+      "names": [
+        "Caisse des dépôts",
+        "Caisse des dépôts et consignations",
+        "Caisse des dépôts et consignations (CDC)"
+      ],
+      "shared": "Caisse des dépôts et consignations",
+      "rule": "shortened name"
+    },
+    {
+      "names": [
+        "EB Development",
+        "EB Dévelopment"
+      ],
+      "shared": "EB Development",
+      "rule": "same name apart from case, punctuation or legal form"
+    },
+    {
+      "names": [
+        "Glazer Capital LLC",
+        "Glazer Capital, LLC"
+      ],
+      "shared": "Glazer Capital LLC",
+      "rule": "same name apart from case, punctuation or legal form"
+    },
+    {
+      "names": [
+        "HSBC Holding Plc",
+        "HSBC Holdings Plc"
+      ],
+      "shared": "HSBC Holdings Plc",
+      "rule": "same name apart from case, punctuation or legal form"
+    },
+    {
+      "names": [
+        "J.P.J.S",
+        "J.P.J.S.",
+        "J.P.J.S. SA"
+      ],
+      "shared": "J.P.J.S",
+      "rule": "same name apart from case, punctuation or legal form"
+    },
+    {
+      "names": [
+        "JPMorgan Chase & Co.",
+        "JPMorgan Chase &Co."
+      ],
+      "shared": "JPMorgan Chase & Co.",
+      "rule": "same name apart from case, punctuation or legal form"
+    },
+    {
+      "names": [
+        "La Banque Postale",
+        "La Banque Postale SA"
+      ],
+      "shared": "La Banque Postale SA",
+      "rule": "same name apart from case, punctuation or legal form"
+    },
+    {
+      "names": [
+        "M. Jean-Luc BARMA",
+        "M. Jean-Luc Barma"
+      ],
+      "shared": "M. Jean-Luc Barma",
+      "rule": "same name apart from case, punctuation or legal form"
+    },
+    {
+      "names": [
+        "MELQART ASSET MANAGEMENT (UK) LTD",
+        "Melqart Asset",
+        "Melqart Asset Management"
+      ],
+      "shared": "Melqart Asset Management",
+      "rule": "shortened name"
+    },
+    {
+      "names": [
+        "NORGES BANK",
+        "Norges Bank"
+      ],
+      "shared": "Norges Bank",
+      "rule": "same name apart from case, punctuation or legal form"
+    },
+    {
+      "names": [
+        "SYQUANT CAPITAL",
+        "Syquant Capital"
+      ],
+      "shared": "Syquant Capital",
+      "rule": "same name apart from case, punctuation or legal form"
+    },
+    {
+      "names": [
+        "Sports Investment",
+        "Sports Investment Limited"
+      ],
+      "shared": "Sports Investment Limited",
+      "rule": "same name apart from case, punctuation or legal form"
+    },
+    {
+      "names": [
+        "Synsion BidCo",
+        "Synsion BidCo SAS"
+      ],
+      "shared": "Synsion BidCo",
+      "rule": "same name apart from case, punctuation or legal form"
+    },
+    {
+      "names": [
+        "TreeHouse Junior Limited",
+        "Treehouse Junior Limited"
+      ],
+      "shared": "Treehouse Junior Limited",
+      "rule": "same name apart from case, punctuation or legal form"
+    },
+    {
+      "names": [
+        "Crédit Industriel et",
+        "Crédit Industriel et Commercial"
+      ],
+      "shared": "Crédit Industriel et Commercial",
+      "rule": "shortened name"
+    },
+    {
+      "names": [
+        "Fonds Stratégique",
+        "Fonds Stratégique de Participations"
+      ],
+      "shared": "Fonds Stratégique de Participations",
+      "rule": "shortened name"
+    },
+    {
+      "names": [
+        "LA FRANCAISE ASSET MANAGEMENT",
+        "La Française"
+      ],
+      "shared": "LA FRANCAISE ASSET MANAGEMENT",
+      "rule": "shortened name"
+    },
+    {
+      "names": [
+        "MAGNETAR CAPITAL PARTNERS",
+        "Magnetar Capital"
+      ],
+      "shared": "MAGNETAR CAPITAL PARTNERS",
+      "rule": "shortened name"
+    },
+    {
+      "names": [
+        "Moneta Asset",
+        "Moneta Asset Management SAS"
+      ],
+      "shared": "Moneta Asset Management SAS",
+      "rule": "shortened name"
+    },
+    {
+      "names": [
+        "Samson Rock",
+        "Samson Rock Capital LLP"
+      ],
+      "shared": "Samson Rock Capital LLP",
+      "rule": "shortened name"
+    },
+    {
+      "names": [
+        "UBS INVESTMENT BANK",
+        "UBS Investment"
+      ],
+      "shared": "UBS INVESTMENT BANK",
+      "rule": "shortened name"
+    }
+  ],
+  "suggestions": [
+    {
+      "names": [
+        "FPCI Starquest Puissance 5",
+        "Starquest Impact & Performance"
+      ],
+      "shared": "Starquest Impact & Performance",
+      "reason": "same brand (Starquest) - may be different entities"
+    },
+    {
+      "names": [
+        "Co.",
+        "JPMorgan Chase & Co."
+      ],
+      "shared": "JPMorgan Chase & Co.",
+      "reason": "incomplete name - same target (EXAIL TECHNOLOGIES)"
+    },
+    {
+      "names": [
+        "Commercial",
+        "Crédit Industriel et Commercial"
+      ],
+      "shared": "Crédit Industriel et Commercial",
+      "reason": "incomplete name - same target (FNAC DARTY)"
+    },
+    {
+      "names": [
+        "Holding LLC",
+        "Digital Innovations Holding LLC"
+      ],
+      "shared": "Digital Innovations Holding LLC",
+      "reason": "incomplete name - same target (NORTH ATLANTIC ENERGIES)"
+    },
+    {
+      "names": [
+        "Management, LLC",
+        "AQR CAPITAL MANAGEMENT, LLC."
+      ],
+      "shared": "AQR CAPITAL MANAGEMENT, LLC.",
+      "reason": "incomplete name - same target (ZODIAC AEROSPACE)"
+    },
+    {
+      "names": [
+        "Renewable",
+        "Brookfield Renewable"
+      ],
+      "shared": "Brookfield Renewable",
+      "reason": "incomplete name - same target (NEOEN)"
+    }
+  ],
+  "fragments": [
+    {
+      "name": "2 477",
+      "rows": 4
+    },
+    {
+      "name": "226C1104-AV313",
+      "rows": 43
+    },
+    {
+      "name": "Bank",
+      "rows": 84
+    },
+    {
+      "name": "Capital LLP",
+      "rows": 50
+    },
+    {
+      "name": "Co.",
+      "rows": 7
+    },
+    {
+      "name": "Commercial",
+      "rows": 2
+    },
+    {
+      "name": "Europe A/S",
+      "rows": 2
+    },
+    {
+      "name": "Générale S.A.",
+      "rows": 10
+    },
+    {
+      "name": "Holding",
+      "rows": 1
+    },
+    {
+      "name": "Holding LLC",
+      "rows": 4
+    },
+    {
+      "name": "Holdings Bidco Limited",
+      "rows": 3
+    },
+    {
+      "name": "Holdings SAS",
+      "rows": 22
+    },
+    {
+      "name": "International",
+      "rows": 16
+    },
+    {
+      "name": "M. Romain",
+      "rows": 6
+    },
+    {
+      "name": "Management LP",
+      "rows": 198
+    },
+    {
+      "name": "Management UK",
+      "rows": 3
+    },
+    {
+      "name": "Management UK LLP",
+      "rows": 6
+    },
+    {
+      "name": "Management, LLC",
+      "rows": 30
+    },
+    {
+      "name": "Management1",
+      "rows": 1
+    },
+    {
+      "name": "Renewable",
+      "rows": 4
+    },
+    {
+      "name": "Société",
+      "rows": 2
+    },
+    {
+      "name": "et consignations",
+      "rows": 3
+    },
+    {
+      "name": "et de",
+      "rows": 2
+    }
+  ]
+}
