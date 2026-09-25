@@ -1,6 +1,7 @@
 import argparse
 import json
 import re
+import urllib.request
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
@@ -8,6 +9,20 @@ from pathlib import Path
 
 DEFAULT_ADMIN_HTML = Path(__file__).resolve().parents[1] / "admin-index.html"
 DEFAULT_CLIENT_HTML = Path(__file__).resolve().parents[1] / "index.html"
+
+# Live deal details for French offer-period companies come from the European
+# public offers tracker (europe.arbinsight.co.uk), which publishes its data as
+# JSON in the european-public-offers-tracker repository.
+DEFAULT_TRACKER_URL = (
+    "https://raw.githubusercontent.com/philipshaw-afk/"
+    "european-public-offers-tracker/main/data/deals.json"
+)
+
+# Tracker target name (normalised) -> AMF offer-period name, for renamed
+# companies that cannot be matched by name.
+TRACKER_ALIASES = {
+    "ESSO": "NORTH ATLANTIC ENERGIES",
+}
 
 # Manual fallback values only. Live share-capital numbers now come from the
 # admin DATA's share_capital_entries (pipeline/state/share_capital.json in the
@@ -61,6 +76,29 @@ def parse_admin_data(path):
     if not match:
         raise ValueError(f"Could not find admin DATA block in {path}")
     return json.loads(match.group(1))
+
+
+def apply_company_links(admin):
+    """Show linked filer names (admin Manage Companies / state/company_links.json)
+    under one shared name, so the same firm appears once in each register."""
+    links = {
+        clean_text(entry.get("sourceName")).upper(): entry
+        for entry in admin.get("company_links", [])
+        if entry.get("sourceName") and entry.get("sharedName")
+    }
+    changed = 0
+    for row in admin.get("transactions", []):
+        original = clean_text(row.get("filer"))
+        link = links.get(original.upper())
+        if not link:
+            continue
+        shared = clean_text(link.get("sharedName"))
+        if link.get("rule") == "approved (separate entities)":
+            row["_entity"] = original  # keeps its own position; added to the group total
+        if shared and shared != row.get("filer"):
+            row["filer"] = shared
+            changed += 1
+    return changed
 
 
 def parse_existing_live(path):
@@ -207,24 +245,99 @@ def build_share_capital_entries(deal_by_norm):
     return sorted(entries, key=lambda row: (normalise_name(row["target"]), row.get("date", "")))
 
 
-def build_current_targets(admin, deal_by_norm, target_map):
+MONTHS = {
+    "jan": 1, "feb": 2, "mar": 3, "apr": 4, "may": 5, "jun": 6,
+    "jul": 7, "aug": 8, "sep": 9, "oct": 10, "nov": 11, "dec": 12,
+}
+
+
+def iso_date(value):
+    """Tracker dates come as '25-Sep-2026', '8 Oct 2026' or '31 October 2026'."""
+    text = clean_text(value)
+    if not text:
+        return ""
+    if re.match(r"^\d{4}-\d{2}-\d{2}", text):
+        return text[:10]
+    match = re.match(r"^(\d{1,2})[\s-]+([A-Za-z]{3,})[\s-]+(\d{4})$", text)
+    if match and match.group(2)[:3].lower() in MONTHS:
+        return f"{int(match.group(3)):04d}-{MONTHS[match.group(2)[:3].lower()]:02d}-{int(match.group(1)):02d}"
+    return text
+
+
+def load_tracker_deals(source):
+    """Return the tracker's French deals, or [] if the tracker is unreachable."""
+    if not source:
+        return []
+    try:
+        if re.match(r"^https?://", source):
+            with urllib.request.urlopen(source, timeout=30) as response:
+                payload = json.loads(response.read().decode("utf-8"))
+        else:
+            payload = json.loads(Path(source).read_text(encoding="utf-8"))
+    except Exception as error:  # noqa: BLE001 - enrichment must never break the build
+        print(f"WARNING: tracker deals unavailable ({error}); French rows use AMF data only.")
+        return []
+    deals = payload.get("deals", payload) if isinstance(payload, dict) else payload
+    return [deal for deal in deals if deal.get("c") == "FR" or deal.get("co") == "France"]
+
+
+def match_tracker_deal(offeree, tracker_deals):
+    """Match an AMF offer-period company to a tracker deal by name."""
+    wanted = normalise_name(offeree)
+    if not wanted:
+        return None
+    candidates = []
+    for deal in tracker_deals:
+        key = normalise_name(deal.get("t"))
+        key = normalise_name(TRACKER_ALIASES.get(key, key))
+        if key == wanted:
+            return deal
+        if key.startswith(wanted + " ") or wanted.startswith(key + " "):
+            candidates.append(deal)
+    return candidates[0] if len(candidates) == 1 else None
+
+
+def deal_is_current(deal, offer_start):
+    """A database deal only describes the live offer if it has not already
+    completed / failed before the current offer period began (e.g. Eurobio's
+    2024 take-private versus its September 2026 offer)."""
+    if not deal:
+        return False
+    status = clean_text(deal.get("status")).lower()
+    if status in ("", "pending", "proposed"):
+        return True
+    completed = date_only(deal.get("completed"))
+    return bool(completed and offer_start and completed >= offer_start)
+
+
+def build_current_targets(admin, deal_by_norm, target_map, tracker_deals=()):
     companies = admin.get("offer_period_companies_from_amf_xlsx", {}).get("companies", [])
     targets = []
     for company in companies:
         target = canonical_target(company.get("offeree"), target_map)
+        offer_start = date_only(company.get("offer_announced"))
         deal = deal_by_norm.get(normalise_name(target), {})
+        if not deal_is_current(deal, offer_start):
+            deal = {}
+        tracked = match_tracker_deal(company.get("offeree"), tracker_deals) or {}
+        offeror = clean_text(company.get("offeror"))
         targets.append(
             {
                 "country": "France",
                 "country_code": "FR",
                 "target": target,
-                "bidder": clean_text(company.get("offeror")),
-                "deal_type": deal.get("deal_type") or "Public Offer",
-                "attitude": deal.get("attitude") or "Friendly",
-                "announced": company.get("offer_announced") or deal.get("announced") or "",
-                "expected_completion": "",
-                "equity_value_eur_m": deal.get("equity_value_eur_m"),
+                "bidder": clean_text(tracked.get("b")) or offeror,
+                "offeror": offeror,
+                "deal_type": clean_text(tracked.get("tp")) or deal.get("deal_type") or "Public Offer",
+                "attitude": clean_text(tracked.get("at")) or deal.get("attitude") or "Friendly",
+                "announced": offer_start or deal.get("announced") or "",
+                "offer_period_start": offer_start,
+                "expected_completion": iso_date(tracked.get("ec")),
+                "equity_value_eur_m": tracked.get("v") if tracked.get("v") is not None else deal.get("equity_value_eur_m"),
+                "premium_pct": tracked.get("p"),
+                "consideration": deal.get("consideration") or "",
                 "isin": clean_text(company.get("isin")),
+                "deal_source": "European public tracker" if tracked else ("M&A Monitor DataBase" if deal else "AMF offer-period list"),
             }
         )
     return targets
@@ -290,6 +403,13 @@ def build_historic_targets(admin, existing_live, deal_by_norm, current_targets, 
 def build_filings(admin, current_targets):
     filer_by_notice = first_filer_for_notice(admin.get("transactions", []))
     current_norms = {normalise_name(row["target"]) for row in current_targets}
+    # Filings made before the current offer period began belong to an earlier
+    # offer for the same company (e.g. Eurobio 2024) and go to the archive.
+    offer_start = {
+        normalise_name(row["target"]): row.get("offer_period_start") or ""
+        for row in current_targets
+        if row.get("country_code") == "FR"
+    }
     filings = []
     historic_filings = []
     for notice in admin.get("notice_summaries", []):
@@ -316,7 +436,9 @@ def build_filings(admin, current_targets):
             "source": "AMF BDIF",
             "source_url": notice.get("document_url") or "",
         }
-        if normalise_name(target) in current_norms:
+        key = normalise_name(target)
+        start = offer_start.get(key, "")
+        if key in current_norms and not (start and row["published_date"] and row["published_date"] < start):
             filings.append(row)
         else:
             historic_filings.append(row)
@@ -412,6 +534,56 @@ def parse_holding(value):
     return {"kind": "long", "value": number, "holding_type": "unknown"}
 
 
+def sum_known(values):
+    known = [value for value in values if value is not None]
+    return sum(known) if known else None
+
+
+def latest_positions(rows):
+    """Latest (share long, derivative long, short) from rows sorted oldest first."""
+    share_long = derivative_long = short_shares = None
+    for row in reversed(rows):
+        holding = parse_holding(row.get("resulting_holding"))
+        if holding["value"] is None:
+            continue
+        if holding["kind"] == "short" and short_shares is None:
+            short_shares = holding["value"]
+        elif holding["kind"] == "long":
+            is_derivative = (
+                row.get("instrument_type") == "Derivative"
+                or holding["holding_type"] == "derivative"
+            )
+            if is_derivative and derivative_long is None:
+                derivative_long = holding["value"]
+            elif not is_derivative and share_long is None:
+                share_long = holding["value"]
+        if share_long is not None and derivative_long is not None and short_shares is not None:
+            break
+    return share_long, derivative_long, short_shares
+
+
+def first_positions(rows):
+    """Earliest (share long, derivative long) from rows sorted oldest first, so
+    the register can show a "First seen %" and a % change over time."""
+    first_share_long = first_derivative_long = None
+    for row in rows:
+        holding = parse_holding(row.get("resulting_holding"))
+        if holding["value"] is None:
+            continue
+        if holding["kind"] == "long":
+            is_derivative = (
+                row.get("instrument_type") == "Derivative"
+                or holding["holding_type"] == "derivative"
+            )
+            if is_derivative and first_derivative_long is None:
+                first_derivative_long = holding["value"]
+            elif not is_derivative and first_share_long is None:
+                first_share_long = holding["value"]
+        if first_share_long is not None and first_derivative_long is not None:
+            break
+    return first_share_long, first_derivative_long
+
+
 def build_registers(admin, deal_by_norm):
     by_target_filer = defaultdict(list)
     for row in admin.get("transactions", []):
@@ -429,26 +601,15 @@ def build_registers(admin, deal_by_norm):
                 row.get("amf_number") or "",
             )
         )
-        share_long = None
-        derivative_long = None
-        short_shares = None
-        for row in reversed(rows):
-            holding = parse_holding(row.get("resulting_holding"))
-            if holding["value"] is None:
-                continue
-            if holding["kind"] == "short" and short_shares is None:
-                short_shares = holding["value"]
-            elif holding["kind"] == "long":
-                is_derivative = (
-                    row.get("instrument_type") == "Derivative"
-                    or holding["holding_type"] == "derivative"
-                )
-                if is_derivative and derivative_long is None:
-                    derivative_long = holding["value"]
-                elif not is_derivative and share_long is None:
-                    share_long = holding["value"]
-            if share_long is not None and derivative_long is not None and short_shares is not None:
-                break
+        # Each legal entity keeps its own latest position; entities brought
+        # together by an approved "separate entities" link are added up.
+        by_entity = defaultdict(list)
+        for row in rows:
+            by_entity[row.get("_entity") or filer].append(row)
+        latest = [latest_positions(entity_rows) for entity_rows in by_entity.values()]
+        share_long = sum_known(item[0] for item in latest)
+        derivative_long = sum_known(item[1] for item in latest)
+        short_shares = sum_known(item[2] for item in latest)
         long_total = None
         if share_long is not None or derivative_long is not None:
             long_total = (share_long or 0) + (derivative_long or 0)
@@ -461,23 +622,9 @@ def build_registers(admin, deal_by_norm):
         # First-seen holding: same per-metric "earliest disclosed" scan as the
         # "last" block above, but walking forward from the oldest row so the
         # register can show a "First seen %" and a % change over time.
-        first_share_long = None
-        first_derivative_long = None
-        for row in rows:
-            holding = parse_holding(row.get("resulting_holding"))
-            if holding["value"] is None:
-                continue
-            if holding["kind"] == "long":
-                is_derivative = (
-                    row.get("instrument_type") == "Derivative"
-                    or holding["holding_type"] == "derivative"
-                )
-                if is_derivative and first_derivative_long is None:
-                    first_derivative_long = holding["value"]
-                elif not is_derivative and first_share_long is None:
-                    first_share_long = holding["value"]
-            if first_share_long is not None and first_derivative_long is not None:
-                break
+        earliest = [first_positions(entity_rows) for entity_rows in by_entity.values()]
+        first_share_long = sum_known(item[0] for item in earliest)
+        first_derivative_long = sum_known(item[1] for item in earliest)
         first_long_total = None
         if first_share_long is not None or first_derivative_long is not None:
             first_long_total = (first_share_long or 0) + (first_derivative_long or 0)
@@ -551,11 +698,17 @@ def main():
     )
     parser.add_argument("--admin", default=str(DEFAULT_ADMIN_HTML), help="Admin index.html path")
     parser.add_argument("--client", default=str(DEFAULT_CLIENT_HTML), help="Client index.html path")
+    parser.add_argument(
+        "--tracker",
+        default=DEFAULT_TRACKER_URL,
+        help="European tracker deals.json (URL or path); pass '' to skip enrichment",
+    )
     args = parser.parse_args()
     admin_html = Path(args.admin)
     client_html = Path(args.client)
 
     admin = parse_admin_data(admin_html)
+    linked_rows = apply_company_links(admin)
 
     global ADMIN_CAPITAL_BY_NORM, ADMIN_CAPITAL_ENTRIES
     ADMIN_CAPITAL_ENTRIES = [
@@ -572,7 +725,8 @@ def main():
     existing_live = parse_existing_live(client_html)
     target_map = canonical_target_map(admin)
     deal_by_norm = build_deal_maps(admin, target_map)
-    current_targets = build_current_targets(admin, deal_by_norm, target_map)
+    tracker_deals = load_tracker_deals(args.tracker)
+    current_targets = build_current_targets(admin, deal_by_norm, target_map, tracker_deals)
     current_targets.extend(build_europe_current_targets(admin))
     historic_targets = build_historic_targets(admin, existing_live, deal_by_norm, current_targets, target_map)
     filings, historic_filings = build_filings(admin, current_targets)
@@ -599,6 +753,10 @@ def main():
             {
                 "client_html": str(client_html),
                 "current_targets": len(current_targets),
+                "transaction_rows_renamed_by_company_links": linked_rows,
+                "french_targets_enriched_from_tracker": sum(
+                    1 for row in current_targets if row.get("deal_source") == "European public tracker"
+                ),
                 "filings": len(filings),
                 "registers": len(registers),
                 "transactions": len(transactions),
