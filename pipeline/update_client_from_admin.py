@@ -9,6 +9,9 @@ from pathlib import Path
 
 DEFAULT_ADMIN_HTML = Path(__file__).resolve().parents[1] / "admin-index.html"
 DEFAULT_CLIENT_HTML = Path(__file__).resolve().parents[1] / "index.html"
+# Historic targets kept from the client data as it stood when the data moved to
+# Supabase; used only when there is no previous client data to carry them forward.
+HISTORIC_SEED = Path(__file__).resolve().parent / "state" / "historic_targets_seed.json"
 
 # Live deal details for French offer-period companies come from the European
 # public offers tracker (europe.arbinsight.co.uk), which publishes its data as
@@ -72,6 +75,8 @@ def date_only(value):
 
 def parse_admin_data(path):
     text = path.read_text(encoding="utf-8")
+    if path.suffix == ".json":  # pipeline/out/data.json from the admin build
+        return json.loads(text)
     match = re.search(r"const DATA = (.*?);\n", text, flags=re.S)
     if not match:
         raise ValueError(f"Could not find admin DATA block in {path}")
@@ -99,6 +104,18 @@ def apply_company_links(admin):
             row["filer"] = shared
             changed += 1
     return changed
+
+
+def load_previous_live(previous, client_html):
+    """The previous client data: Supabase's live.json (downloaded by supabase_sync.py),
+    else the historic seed, else a LIVE block still embedded in an old index.html."""
+    if previous and Path(previous).exists():
+        return json.loads(Path(previous).read_text(encoding="utf-8"))
+    if HISTORIC_SEED.exists():
+        return {"historic_targets": json.loads(HISTORIC_SEED.read_text(encoding="utf-8"))["historic_targets"]}
+    if client_html.exists():
+        return parse_existing_live(client_html)
+    return {}
 
 
 def parse_existing_live(path):
@@ -694,10 +711,17 @@ def replace_live_block(path, live):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Embed live data from the admin tracker into the client site."
+        description="Build the client site's data from the admin tracker's data. "
+        "The daily french-opa-admin workflow runs it with --admin pipeline/out/data.json "
+        "--previous pipeline/out/previous-live.json --out pipeline/out/live.json and uploads "
+        "the result to Supabase (opa-public/live.json.gz), where the client page loads it."
     )
-    parser.add_argument("--admin", default=str(DEFAULT_ADMIN_HTML), help="Admin index.html path")
-    parser.add_argument("--client", default=str(DEFAULT_CLIENT_HTML), help="Client index.html path")
+    parser.add_argument("--admin", default=str(DEFAULT_ADMIN_HTML),
+                        help="Admin data: data.json from the admin build (or an old admin index.html)")
+    parser.add_argument("--previous", default="", help="Previous client data (live.json), if any")
+    parser.add_argument("--out", default="", help="Write the client data to this JSON file")
+    parser.add_argument("--client", default=str(DEFAULT_CLIENT_HTML),
+                        help="Without --out: embed the data in this client index.html (old method)")
     parser.add_argument(
         "--tracker",
         default=DEFAULT_TRACKER_URL,
@@ -722,7 +746,7 @@ def main():
         if key:
             ADMIN_CAPITAL_BY_NORM[key] = entry
 
-    existing_live = parse_existing_live(client_html)
+    existing_live = load_previous_live(args.previous, client_html)
     target_map = canonical_target_map(admin)
     deal_by_norm = build_deal_maps(admin, target_map)
     tracker_deals = load_tracker_deals(args.tracker)
@@ -746,12 +770,17 @@ def main():
         "historic_filings": historic_filings,
         "europe_sources": admin.get("europe_regulatory", {}).get("regulatory_sources", []),
     }
-    replace_live_block(client_html, live)
+    if args.out:
+        out = Path(args.out)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(json.dumps(live, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    else:
+        replace_live_block(client_html, live)
 
     print(
         json.dumps(
             {
-                "client_html": str(client_html),
+                "output": args.out or str(client_html),
                 "current_targets": len(current_targets),
                 "transaction_rows_renamed_by_company_links": linked_rows,
                 "french_targets_enriched_from_tracker": sum(
