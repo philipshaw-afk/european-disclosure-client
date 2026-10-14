@@ -112,6 +112,7 @@ tbody tr:last-child td{border-bottom:0}
 .ownbar.ii{background:var(--g)}
 .ownbar.ot{background:var(--am)}
 .ownbar.ua{background:rgba(100,116,139,.5)}
+.samestake{font-size:10.5px;color:var(--t3);margin-top:2px}
 .ownbar.bk{background:#2F5D8F}
 .ownbar.pe{background:#B8467A}
 .ownbar.pn{background:#A35D2C}
@@ -311,11 +312,48 @@ function parseFilingDate(row){
     if(mo!=null) return new Date(+m[3],mo,+m[1]);}
   return null;
 }
-function filingPct(row){
+function filingTotalPct(row){
   if(row.percentage!=null&&row.percentage!==""){const n=Number(String(row.percentage).replace(",","."));if(!Number.isNaN(n))return n;}
   const hay=[row.holding,row.title,row.details].filter(Boolean).join(" ");
   const m=hay.match(/(\d+(?:[.,]\d+)?)\s*%/);
   return m?Number(m[1].replace(",",".")):null;
+}
+/* German BaFin notifications split voting rights into shares (par. 33/34 WpHG) and
+   instruments (par. 38: options, swaps, irrevocable agreements). The total (par. 39)
+   double-counts across holders - one holder's instruments are often the banks' hedges
+   of the same shares - so ownership uses the shares figure. */
+function bafinSplit(row){
+  const d=String(row.details||"");
+  const s=d.match(/Shares \(par\. 33\/34\):\s*(-|\d+(?:[.,]\d+)?)%/);
+  if(!s) return null;
+  const i=d.match(/Instruments \(par\. 38\):\s*(-|\d+(?:[.,]\d+)?)%/);
+  const t=d.match(/Total \(par\. 39\):\s*(-|\d+(?:[.,]\d+)?)%/);
+  const num=m=>m&&m[1]!=="-"?Number(m[1].replace(",",".")):0;
+  return {shares:num(s),instruments:num(i),total:t&&t[1]!=="-"?num(t):num(s)+num(i)};
+}
+/* Ownership percentage: shares-based voting rights where the filing gives the split. */
+function filingPct(row){
+  const b=bafinSplit(row);
+  return b?b.shares:filingTotalPct(row);
+}
+/* Parties in one chain of control (e.g. a couple and their holding company, or two
+   foundations) each notify the same stake. Holders whose latest notification has the
+   same date and the same percentages are shown on one line and counted once. */
+function mergeSameStake(list,keyOf){
+  const groups=new Map(), out=[];
+  list.forEach(h=>{
+    const k=keyOf(h);
+    if(!k){ out.push(h); return; }
+    if(!groups.has(k)){ const g={...h,names:[h.inv]}; groups.set(k,g); out.push(g); return; }
+    const g=groups.get(k);
+    g.names.push(h.inv); g.inv=g.names.join(" / "); g.n=(g.n||0)+(h.n||0);
+  });
+  return out;
+}
+function holderNames(h){ return h.names&&h.names.length?h.names:[h.inv]; }
+function holderType(h){
+  const names=holderNames(h);
+  return names.map(linkedCompanyType).find(Boolean)||inferredCompanyType(names[0]);
 }
 const isoDate=d=>d?`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`:"";
 
@@ -517,7 +555,7 @@ function ownershipMixRows(holders){
   const hasKnownPct=holders.some(h=>h.lastPct!=null&&Number.isFinite(Number(h.lastPct)));
   const totalLong=holders.reduce((sum,h)=>sum+Number(h.longShares||0),0);
   return OWNER_TYPES.map(type=>{
-    const rows=holders.filter(h=>ownerTypeForInvestor(h.inv)===type);
+    const rows=holders.filter(h=>holderType(h)===type);
     const shares=rows.reduce((sum,h)=>sum+Number(h.longShares||0),0);
     const pct=hasKnownPct
       ?rows.reduce((sum,h)=>sum+Number(h.lastPct||0),0)
@@ -545,7 +583,7 @@ function renderOwnershipMix(holders){
         <div class="ownpct">${fmtOwnerPct(r.pct)}</div>
       </div>`;
     }).join("")}
-    <div class="ownnote">${hasKnownPct?"Percentage of target equity.":"Percentage of disclosed long positions."}</div>
+    <div class="ownnote">${hasKnownPct?"Percentage of target equity.":"Percentage of disclosed long positions."}${hasKnownPct&&rows.reduce((s,r)=>s+Number(r.pct||0),0)>100.5?" The disclosed positions add up to more than 100%: some notifications overlap or have been superseded without a new filing.":""}</div>
   </div>`;
 }
 
@@ -620,17 +658,30 @@ function renderList(mode){
 
 /* ============ detail view ============ */
 function buildRegister(rows){
-  const sorted=rows.map(r=>({...r,_d:parseFilingDate(r),_p:filingPct(r)}))
+  const sorted=rows.map(r=>({...r,_d:parseFilingDate(r),_p:filingPct(r),_t:filingTotalPct(r),_b:bafinSplit(r)}))
     .sort((a,b)=>(a._d?.getTime()||0)-(b._d?.getTime()||0));
   const holders=new Map();
   sorted.forEach(r=>{
     const name=r.declarant||r.holder||"(undisclosed)";
-    if(!holders.has(name)) holders.set(name,{inv:name,n:0,first:null,last:null,firstPct:null,lastPct:null,src:r.source,url:r.source_url});
+    if(!holders.has(name)) holders.set(name,{inv:name,n:0,first:null,last:null,firstPct:null,lastPct:null,
+      firstTotal:null,lastTotal:null,firstSplit:false,lastSplit:false,src:r.source,url:r.source_url});
     const h=holders.get(name);
     h.n++; h.last=r._d||h.last; h.first=h.first||r._d; h.src=r.source; h.url=r.source_url;
-    if(r._p!=null){ if(h.firstPct==null)h.firstPct=r._p; h.lastPct=r._p; }
+    if(r._p!=null){
+      if(h.firstPct==null){ h.firstPct=r._p; h.firstTotal=r._t; h.firstSplit=!!r._b; }
+      h.lastPct=r._p; h.lastTotal=r._t; h.lastSplit=!!r._b; h.lastDay=isoDate(r._d);
+    }
   });
-  return {holders:[...holders.values()].sort((a,b)=>(b.lastPct??-1)-(a.lastPct??-1)),rows:sorted};
+  const list=[...holders.values()].map(h=>{
+    // Change: shares vs shares when both notifications give the split, otherwise totals.
+    h.chg=(h.lastPct==null||h.firstPct==null)?null
+      :(h.firstSplit&&h.lastSplit?h.lastPct-h.firstPct:(h.lastTotal??h.lastPct)-(h.firstTotal??h.firstPct));
+    if(h.lastSplit!==h.firstSplit){ h.firstPct=h.firstTotal; if(!h.lastSplit) h.lastPct=h.lastTotal; }
+    h.longPct=h.lastSplit?h.lastTotal:null;
+    return h;
+  });
+  const merged=mergeSameStake(list,h=>h.lastSplit&&h.lastPct>0?`${h.lastDay}|${h.lastPct}|${h.lastTotal}`:null);
+  return {holders:merged.sort((a,b)=>(b.lastPct??-1)-(a.lastPct??-1)),rows:sorted};
 }
 function renderDetail(name,histDate){
   const app=document.getElementById("app");
@@ -671,14 +722,14 @@ function renderDetail(name,histDate){
       <thead><tr><th style="width:40px">#</th><th>Investor / declarant</th><th style="width:100px">Latest filing</th><th style="width:80px">Current %</th><th style="width:120px">Long incl. derivatives</th><th style="width:110px">Short incl. derivatives</th><th style="width:80px">First seen %</th><th style="width:80px">Change</th><th style="width:60px">Filings</th><th style="width:110px">Source</th></tr></thead>
      <tbody>
      ${holders.map((h,i)=>{
-       const chg=(h.lastPct!=null&&h.firstPct!=null)?h.lastPct-h.firstPct:null;
+       const chg=h.chg!==undefined?h.chg:((h.lastPct!=null&&h.firstPct!=null)?h.lastPct-h.firstPct:null);
        const cls=chg==null?"chg-fl":(chg>0?"chg-up":(chg<0?"chg-dn":"chg-fl"));
        return `<tr>
         <td><span style="font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--t3)">${i+1}</span></td>
-        <td><div class="tn"><a class="invlink" href="#/ps/${encodeURIComponent(name)}/${encodeURIComponent(h.inv)}" title="Purchase & sale history">${esc(h.inv)}</a></div></td>
+        <td><div class="tn">${holderNames(h).map(nm=>`<a class="invlink" href="${psHashFor(name,nm)}" title="Purchase & sale history">${esc(nm)}</a>`).join(" / ")}</div>${holderNames(h).length>1?`<div class="samestake">Same stake notified by ${holderNames(h).length} parties in one chain of control</div>`:""}</td>
         <td class="dt">${esc(h.lastDisp)}</td>
         <td><span class="pct">${fmtP(h.lastPct)}</span></td>
-        <td><span class="pct">${fmtN(h.longShares)}</span></td>
+        <td><span class="pct">${h.longPct!=null?fmtP(h.longPct):fmtN(h.longShares)}</span></td>
         <td><span class="pct" style="color:${h.shortShares?"var(--r)":"var(--t3)"}">${fmtN(h.shortShares)}</span></td>
         <td><span class="pct" style="color:var(--t3)">${fmtP(h.firstPct)}</span></td>
         <td><span class="${cls}">${chg==null?"–":(chg>0?"+":"")+chg.toFixed(3).replace(/\.?0+$/,"")+"pp"}</span></td>
@@ -688,7 +739,7 @@ function renderDetail(name,histDate){
      </tbody>
    </table></div>
    ${renderOwnershipMix(holders)}
-   <div class="tfr"><span>Positions reflect each investor's most recent official notification.${capitalNote}</span><a href="mailto:enquiries@ma-monitor.co.uk">Full history in the DataBase →</a></div></div>`}
+   <div class="tfr"><span>Positions reflect each investor's most recent official notification.${capitalNote}${holders.some(h=>h.longPct!=null)?" German (BaFin) positions: Current % is voting rights held in shares (§33/34 WpHG); the long column is the notified total including instruments (§38), which can overlap with other holders' positions.":""}</span><a href="mailto:enquiries@ma-monitor.co.uk">Full history in the DataBase →</a></div></div>`}
 
    <div class="sech"><span class="t">All disclosed trades &amp; notifications</span><span class="l"></span></div>
    <div class="tcard"><div class="tscr"><table>
@@ -1009,11 +1060,12 @@ function registerPctAsAt(target,cutoff){
   const inv=new Map();
   rows.forEach(r=>{
     const nm=r.declarant||r.holder||"(undisclosed)";
-    if(!inv.has(nm)) inv.set(nm,{inv:nm,pct:null,last:"",n:0});
+    if(!inv.has(nm)) inv.set(nm,{inv:nm,pct:null,total:null,split:false,last:"",n:0});
     const e=inv.get(nm); e.n++; const d=isoDate(r._d); if(d>e.last)e.last=d;
-    if(r._p!=null) e.pct=Number(r._p);
+    if(r._p!=null){ e.pct=Number(r._p); e.total=filingTotalPct(r); e.split=!!bafinSplit(r); e.pctDay=d; }
   });
-  return inv;
+  const merged=mergeSameStake([...inv.values()],e=>e.split&&e.pct>0?`${e.pctDay}|${e.pct}|${e.total}`:null);
+  return new Map(merged.map(e=>[e.inv,e]));
 }
 function ppCell(v){
   if(v==null) return "<span class='signed-z'>–</span>";
@@ -1090,7 +1142,7 @@ function renderHistoricalSection(name,cutoff){
    <div class="tcard">${controls}<div class="tscr"><table>
      <thead><tr><th style="width:40px">#</th><th>Holder / declarant</th><th style="width:110px">% as at date</th><th style="width:130px">Latest notification ≤ date</th><th style="width:110px">Notifications</th><th style="width:95px">Current %</th><th style="width:120px">Change since date</th></tr></thead>
      <tbody>
-     ${rows.map((r,i)=>`<tr class="rowlink" onclick="location.hash='${psHashFor(name,r.inv)}'">
+     ${rows.map((r,i)=>`<tr class="rowlink" onclick="location.hash='${psHashFor(name,String(r.inv).split(" / ")[0])}'">
         <td><span style="font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--t3)">${i+1}</span></td>
         <td><div class="tn">${esc(r.inv)}</div></td>
         <td><span class="pct">${fmtP(r.aPct)}</span></td>
