@@ -662,6 +662,9 @@ function buildRegister(rows){
     .sort((a,b)=>(a._d?.getTime()||0)-(b._d?.getTime()||0));
   const holders=new Map();
   sorted.forEach(r=>{
+    // register:false = listed under notifications but not a holding (e.g. an irrevocable
+    // undertaking, a bidder's market purchase or a merger event).
+    if(r.register===false) return;
     const name=r.declarant||r.holder||"(undisclosed)";
     if(!holders.has(name)) holders.set(name,{inv:name,n:0,first:null,last:null,firstPct:null,lastPct:null,
       firstTotal:null,lastTotal:null,firstSplit:false,lastSplit:false,src:r.source,url:r.source_url});
@@ -1055,7 +1058,7 @@ function registerAsAt(target,cutoff){
 function registerPctAsAt(target,cutoff){
   const rows=filingsFor(String(target||"").trim())
     .map(r=>({...r,_d:parseFilingDate(r),_p:filingPct(r)}))
-    .filter(r=>r._d&&(!cutoff||isoDate(r._d)<=cutoff))
+    .filter(r=>r._d&&r.register!==false&&(!cutoff||isoDate(r._d)<=cutoff))
     .sort((a,b)=>a._d-b._d);
   const inv=new Map();
   rows.forEach(r=>{
