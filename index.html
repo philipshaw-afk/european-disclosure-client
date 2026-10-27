@@ -289,6 +289,8 @@ const SAMPLE = {
 
 /* ============ helpers ============ */
 const esc=s=>String(s??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+/* links built from data (AMF / CONSOB / regulator pages) may only be web links or links within the site */
+const safeUrl=v=>{const s=String(v??"").trim(),t=s.replace(/[\u0000-\u0020\u007f]/g,"");return /^[a-z][a-z0-9+.\-]*:/i.test(t)&&!/^https?:/i.test(t)?"#":s;};
 const fmtV=v=>v==null?"—":(v>=1000?`€${(v/1000).toFixed(1).replace(/\.0$/,"")}bn`:`€${Math.round(v)}m`);
 function tpClass(tp,at){
   const m={"Public Offer":"tp-po","Mandatory":"tp-mand","MBO/MBI":"tp-mbo","Merger":"tp-merger","Minority Bid":"tp-minority","Scheme":"tp-scheme","Divestiture":"tp-div"};
@@ -737,7 +739,7 @@ function renderDetail(name,histDate){
         <td><span class="pct" style="color:var(--t3)">${fmtP(h.firstPct)}</span></td>
         <td><span class="${cls}">${chg==null?"–":(chg>0?"+":"")+chg.toFixed(3).replace(/\.?0+$/,"")+"pp"}</span></td>
         <td style="font-family:'JetBrains Mono',monospace">${h.n}</td>
-        <td class="src">${h.url?`<a href="${esc(h.url)}" target="_blank" rel="noopener">${esc(h.src||"Source")}</a>`:esc(h.src||"")}</td>
+        <td class="src">${h.url?`<a href="${esc(safeUrl(h.url))}" target="_blank" rel="noopener">${esc(h.src||"Source")}</a>`:esc(h.src||"")}</td>
        </tr>`;}).join("")||`<tr><td colspan="10" class="empty">No positions disclosed yet for this company.</td></tr>`}
      </tbody>
    </table></div>
@@ -754,7 +756,7 @@ function renderDetail(name,histDate){
         <td style="font-size:11.5px">${esc(r.filing_type||"")}${r.instrument_type?`<br><span style="color:var(--t3);font-size:10.5px">${esc(r.instrument_type)}</span>`:""}</td>
         <td><span class="pct">${r._p!=null?fmtP(r._p):"—"}</span></td>
         <td style="font-size:11.5px;line-height:1.4">${esc(r.details||r.title||"")}</td>
-        <td class="src">${r.source_url?`<a href="${esc(r.source_url)}" target="_blank" rel="noopener">${esc(r.source||"Source")} ↗</a>`:esc(r.source||"")}</td>
+        <td class="src">${r.source_url?`<a href="${esc(safeUrl(r.source_url))}" target="_blank" rel="noopener">${esc(r.source||"Source")} ↗</a>`:esc(r.source||"")}</td>
        </tr>`).join("")||`<tr><td colspan="6" class="empty">No disclosures collected yet — they will appear here as soon as they are published.</td></tr>`}
      </tbody>
    </table></div>
@@ -968,7 +970,7 @@ function renderPS(target,investor){
           <td><span class="pct" style="color:${g.short?"var(--r)":"var(--t3)"}">${g.short!=null?Number(g.short).toLocaleString("en-GB"):"–"}</span></td>
           <td class="dt">${esc(g.price||"")}</td>
           <td>${signedCell(g.shares+g.derivs)}</td>
-          <td class="src">${g.url?`<a href="${esc(g.url)}" target="_blank" rel="noopener">PDF</a>`:""}</td>
+          <td class="src">${g.url?`<a href="${esc(safeUrl(g.url))}" target="_blank" rel="noopener">PDF</a>`:""}</td>
          </tr>`).join("")}
        <tr style="background:rgba(0,0,0,.02);font-weight:700"><td colspan="2">Total</td><td>${signedCell(totals.s)}</td><td>${signedCell(totals.d)}</td><td colspan="4"></td><td></td></tr>
        ${vwapSummaryRow("VWAP purchases",purchaseVwap)}
@@ -1009,7 +1011,7 @@ function renderPS(target,investor){
         <td style="font-size:11.5px">${esc(r.filing_type||"")}</td>
         <td><span class="pct">${r._p!=null?r._p+"%":"—"}</span></td>
         <td style="font-size:11.5px;line-height:1.4">${esc(r.details||r.title||"")}</td>
-        <td class="src">${r.source_url?`<a href="${esc(r.source_url)}" target="_blank" rel="noopener">${esc(r.source||"Source")} ↗</a>`:esc(r.source||"")}</td>
+        <td class="src">${r.source_url?`<a href="${esc(safeUrl(r.source_url))}" target="_blank" rel="noopener">${esc(r.source||"Source")} ↗</a>`:esc(r.source||"")}</td>
        </tr>`).join("")||`<tr><td colspan="5" class="empty">No disclosures recorded for this investor.</td></tr>`}
      </tbody>
    </table></div></div>`;
